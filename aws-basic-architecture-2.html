@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AWS Basic Architecture</title>
+<style>
+:root{
+  --blue:#0756c9;
+  --blue-dark:#09245b;
+  --blue-soft:#eaf3ff;
+  --line:#a9c8f2;
+  --text:#17264a;
+  --muted:#50627f;
+  --bg:#f4f8fe;
+}
+*{box-sizing:border-box}
+body{
+  margin:0;
+  font-family:Inter,Segoe UI,Arial,sans-serif;
+  color:var(--text);
+  background:
+    radial-gradient(circle at top left,#e7f1ff 0,transparent 34%),
+    radial-gradient(circle at bottom right,#edf5ff 0,transparent 32%),
+    var(--bg);
+}
+.page{
+  width:100%;
+  max-width:1600px;
+  margin:0 auto;
+  padding:28px clamp(18px,2.5vw,42px) 36px;
+}
+.hero{text-align:center;margin-bottom:22px}
+.hero h1{
+  margin:0;
+  color:var(--blue-dark);
+  font-size:clamp(34px,4.5vw,54px);
+  line-height:1.05;
+  letter-spacing:-1.6px;
+}
+.hero h1 span{color:var(--blue)}
+.pill{
+  display:inline-block;
+  margin-top:12px;
+  padding:8px 18px;
+  border-radius:999px;
+  background:var(--blue);
+  color:#fff;
+  font-size:14px;
+  font-weight:800;
+}
+.intro{
+  max-width:1180px;
+  margin:0 auto 24px;
+  padding:17px 22px;
+  border:1.5px solid var(--line);
+  border-radius:17px;
+  background:rgba(255,255,255,.88);
+  box-shadow:0 5px 16px rgba(24,73,130,.07);
+  text-align:center;
+  font-size:15px;
+  line-height:1.65;
+}
+.intro strong{color:var(--blue-dark)}
+
+.main-layout{
+  display:grid;
+  grid-template-columns:minmax(420px,1fr) minmax(600px,1.25fr);
+  gap:22px;
+  align-items:start;
+}
+.image-panel{
+  position:sticky;
+  top:18px;
+  padding:15px;
+  border:1.5px solid var(--line);
+  border-radius:20px;
+  background:#fff;
+  box-shadow:0 7px 22px rgba(24,73,130,.09);
+}
+.image-panel img{
+  display:block;
+  width:100%;
+  height:auto;
+  max-height:calc(100vh - 160px);
+  object-fit:contain;
+  border-radius:12px;
+  background:#fafafa;
+}
+.caption{
+  text-align:center;
+  margin:10px 0 0;
+  color:var(--muted);
+  font-size:12px;
+  font-weight:700;
+}
+.right h2{
+  margin:0 0 14px;
+  color:var(--blue-dark);
+  font-size:25px;
+}
+.grid{
+  width:100%;
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:15px;
+  align-items:start;
+}
+.card{
+  width:100%;
+  min-width:0;
+  display:flex;
+  flex-direction:column;
+  padding:17px 16px 14px;
+  border:1.5px solid var(--line);
+  border-radius:17px;
+  background:linear-gradient(180deg,#fcfdff 0%,#edf5ff 100%);
+  box-shadow:0 5px 16px rgba(24,73,130,.08);
+}
+.icon{
+  width:50px;height:50px;
+  display:grid;place-items:center;
+  margin:0 auto 9px;
+  border-radius:50%;
+  background:var(--blue);
+  color:#fff;
+  font-size:23px;
+}
+.card h3{
+  margin:0;
+  text-align:center;
+  color:var(--blue-dark);
+  font-size:18px;
+}
+.divider{
+  border-top:2px dotted #9dbde8;
+  margin:11px 0 9px;
+}
+.items{
+  margin:7px 0 0;
+  padding-left:19px;
+}
+.items li{
+  margin:5px 0;
+  font-size:13.5px;
+  line-height:1.35;
+  font-weight:700;
+}
+.goal{
+  margin-top:11px;
+  padding:9px 11px;
+  border-radius:10px;
+  background:var(--blue-soft);
+  border:1px solid #c7dcf8;
+  color:var(--blue-dark);
+  font-size:12.5px;
+  line-height:1.4;
+  font-weight:700;
+}
+.goal b{font-weight:900}
+
+.bottom{
+  margin-top:15px;
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:15px;
+}
+.callout{
+  padding:15px 17px;
+  border:1.5px solid var(--line);
+  border-radius:16px;
+  background:#fff;
+  box-shadow:0 5px 16px rgba(24,73,130,.07);
+}
+.callout h3{
+  margin:0 0 7px;
+  color:var(--blue-dark);
+  font-size:17px;
+}
+.callout p{
+  margin:0;
+  line-height:1.5;
+  color:var(--muted);
+  font-size:13px;
+}
+footer{
+  text-align:center;
+  margin-top:22px;
+  color:#71809a;
+  font-size:12px;
+}
+.actions{
+  position:fixed;
+  top:15px;
+  right:17px;
+  z-index:20;
+  display:flex;
+  gap:8px;
+}
+.actions button{
+  border:0;
+  border-radius:10px;
+  padding:9px 12px;
+  color:#fff;
+  background:var(--blue);
+  font-weight:800;
+  cursor:pointer;
+  box-shadow:0 4px 12px rgba(0,0,0,.12);
+}
+.actions .png-btn{background:#0b7a45}
+
+@media(max-width:1050px){
+  .main-layout{grid-template-columns:1fr}
+  .image-panel{position:relative;top:auto}
+  .image-panel img{max-height:none}
+}
+@media(max-width:650px){
+  .page{padding-top:72px}
+  .grid,.bottom{grid-template-columns:1fr}
+  .actions{left:14px;right:14px;justify-content:center}
+  .actions button{flex:1}
+}
+@media print{
+  body{background:#fff}
+  .page{max-width:none;padding:0}
+  .actions{display:none}
+  .image-panel,.card,.callout,.intro{box-shadow:none}
+  .main-layout{grid-template-columns:42% 58%;gap:12px}
+  .image-panel{position:relative;top:auto}
+}
+</style>
+</head>
+
+<body>
+<div class="actions">
+  <button onclick="window.print()">🖨 Print / Save as PDF</button>
+  <button class="png-btn" onclick="downloadPNG()">🖼 Download PNG</button>
+</div>
+
+<main class="page">
+  <header class="hero">
+    <h1><span>AWS</span> Basic Architecture</h1>
+    <div class="pill">Cloud Architecture Cheat Sheet</div>
+  </header>
+
+  <section class="intro">
+    <strong>Understand the architecture before learning individual AWS services.</strong>
+    This reference shows how common AWS building blocks work together—from DNS and content delivery
+    through APIs and compute, to messaging, databases, storage, monitoring, and access control.
+  </section>
+
+  <section class="main-layout">
+    <div class="image-panel">
+      <img src="https://smandlik-lab.github.io/Amazon-Web-Services-AWS/AWS-Basic-Architecture.jpeg"
+           alt="AWS Basic Architecture diagram">
+      <div class="caption">AWS Basic Architecture — reference diagram</div>
+    </div>
+
+    <div class="right">
+      <h2>Key AWS Building Blocks</h2>
+
+      <section class="grid">
+        <article class="card">
+          <div class="icon">🌐</div>
+          <h3>DNS & CDN</h3>
+          <div class="divider"></div>
+          <ul class="items">
+            <li>Amazon Route 53</li>
+            <li>CloudFront</li>
+            <li>Static files & images</li>
+            <li>Global content delivery</li>
+          </ul>
+          <div class="goal"><b>Goal:</b> Direct users to the application and deliver static content efficiently.</div>
+        </article>
+
+        <article class="card">
+          <div class="icon">🚪</div>
+          <h3>API Gateway</h3>
+          <div class="divider"></div>
+          <ul class="items">
+            <li>Request routing</li>
+            <li>Authentication</li>
+            <li>Rate limiting</li>
+            <li>Throttling</li>
+          </ul>
+          <div class="goal"><b>Goal:</b> Provide a controlled entry point for backend APIs.</div>
+        </article>
+
+        <article class="card">
+          <div class="icon">⚙️</div>
+          <h3>Compute Layer</h3>
+          <div class="divider"></div>
+          <ul class="items">
+            <li>EC2 — virtual servers</li>
+            <li>ECS — container workloads</li>
+            <li>Lambda — serverless functions</li>
+            <li>Choose compute by workload</li>
+          </ul>
+          <div class="goal"><b>Goal:</b> Run application services using the appropriate compute model.</div>
+        </article>
+
+        <article class="card">
+          <div class="icon">📨</div>
+          <h3>Async Processing</h3>
+          <div class="divider"></div>
+          <ul class="items">
+            <li>Amazon SQS</li>
+            <li>Decouple services</li>
+            <li>Process background requests</li>
+            <li>Improve resilience</li>
+          </ul>
+          <div class="goal"><b>Goal:</b> Move long-running or background work out of synchronous API requests.</div>
+        </article>
+
+        <article class="card">
+          <div class="icon">🗄️</div>
+          <h3>Data Layer</h3>
+          <div class="divider"></div>
+          <ul class="items">
+            <li>Amazon RDS</li>
+            <li>Amazon DynamoDB</li>
+            <li>Relational data</li>
+            <li>NoSQL data</li>
+          </ul>
+          <div class="goal"><b>Goal:</b> Store application data using the database technology that fits the workload.</div>
+        </article>
+
+        <article class="card">
+          <div class="icon">🪣</div>
+          <h3>Object Storage</h3>
+          <div class="divider"></div>
+          <ul class="items">
+            <li>Amazon S3</li>
+            <li>Images</li>
+            <li>Videos & audio</li>
+            <li>Large files</li>
+          </ul>
+          <div class="goal"><b>Goal:</b> Store durable media and large objects separately from application compute.</div>
+        </article>
+
+        <article class="card">
+          <div class="icon">📊</div>
+          <h3>Monitoring</h3>
+          <div class="divider"></div>
+          <ul class="items">
+            <li>Amazon CloudWatch</li>
+            <li>Logs</li>
+            <li>Metrics & monitoring</li>
+            <li>Operational visibility</li>
+          </ul>
+          <div class="goal"><b>Goal:</b> Observe application health and identify operational issues.</div>
+        </article>
+
+        <article class="card">
+          <div class="icon">🔐</div>
+          <h3>Identity & Access</h3>
+          <div class="divider"></div>
+          <ul class="items">
+            <li>AWS IAM</li>
+            <li>Access control</li>
+            <li>Identity management</li>
+            <li>Least-privilege permissions</li>
+          </ul>
+          <div class="goal"><b>Goal:</b> Control who and what can access AWS resources.</div>
+        </article>
+      </section>
+
+      <section class="bottom">
+        <div class="callout">
+          <h3>🔄 Typical Request Flow</h3>
+          <p><strong>User → Route 53 → CloudFront → API Gateway → Compute → Database/Storage</strong>.
+          Background work can be placed on SQS and processed asynchronously.</p>
+        </div>
+        <div class="callout">
+          <h3>💡 Architecture Mindset</h3>
+          <p>Think of AWS as specialized building blocks. Design around scalability, security,
+          resilience, observability, and workload requirements.</p>
+        </div>
+      </section>
+    </div>
+  </section>
+
+  <footer>AWS Basic Architecture • Learning & Reference Page</footer>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+<script>
+async function downloadPNG(){
+  const button=document.querySelector('.png-btn');
+  button.disabled=true;
+  button.textContent='Preparing PNG...';
+  try{
+    const canvas=await html2canvas(document.querySelector('.page'),{
+      scale:Math.min(2,window.devicePixelRatio||1),
+      backgroundColor:'#f4f8fe',
+      useCORS:true,
+      imageTimeout:15000
+    });
+    const link=document.createElement('a');
+    link.download='aws-basic-architecture.png';
+    link.href=canvas.toDataURL('image/png');
+    link.click();
+  }catch(error){
+    alert('PNG generation failed. Please try again after the image has loaded.');
+    console.error(error);
+  }finally{
+    button.disabled=false;
+    button.textContent='🖼 Download PNG';
+  }
+}
+</script>
+</body>
+</html>
